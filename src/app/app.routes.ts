@@ -3,11 +3,16 @@ import { DashboardLayoutComponent } from './presentation/layouts/dashboardLayout
 import { isAuthenticatedGuard } from './security/guards/isAuthenticated.guard';
 import { AuthLayoutComponent } from './presentation/layouts/authLayout/authLayout.component';
 
-
 export const routes: Routes = [
-  // Rutas del layout de autenticación
+  // Ruta vacía para redirección por defecto
   {
     path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full',
+  },
+  // Rutas del layout de autenticación
+  {
+    path: 'auth',
     component: AuthLayoutComponent, // Layout para autenticación
     children: [
       {
@@ -23,8 +28,8 @@ export const routes: Routes = [
       {
         path: 'activate',
         loadComponent: () =>
-          import('./presentation/pages/activePage/activePage.component').then((m) => m.default)
-      }
+          import('./presentation/pages/activePage/activePage.component').then((m) => m.default),
+      },
     ],
   },
   // Rutas del dashboard (protección con guard)
@@ -51,12 +56,6 @@ export const routes: Routes = [
           import('./presentation/pages/interviewRecordPage/interviewRecordPage.component').then((m) => m.default),
         data: { icon: 'fa-solid fa-calendar-check', title: 'Interview Record', description: 'Historial de entrevistas' },
       },
-      // {
-      //   path: 'text-to-audio',
-      //   loadComponent: () =>
-      //     import('./presentation/pages/textToAudioPage/textToAudioPage.component').then((m) => m.default),
-      //   data: { icon: 'fa-solid fa-file-audio', title: 'Texto a audio', description: 'Convertir texto a audio' },
-      // },
       {
         path: 'interview',
         loadComponent: () =>
@@ -68,7 +67,7 @@ export const routes: Routes = [
   // Redirección por defecto
   {
     path: '**',
-    redirectTo: 'login', // Redirige a login si la ruta no existe
+    redirectTo: 'auth/login', // Redirige a login si la ruta no existe
     pathMatch: 'full',
   },
 ];
