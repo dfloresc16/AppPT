@@ -1,0 +1,63 @@
+<div class="flex items-center justify-center min-h-screen bg-[#111827]">
+  <div class="bg-[#1F2937] shadow-md rounded-lg p-8 max-w-sm w-full">
+    <h2 class="text-2xl font-bold text-center mb-6 text-[#6A5ACD]">Activación de Cuenta</h2>
+    <form [formGroup]="activationForm" (ngSubmit)="onActivate()" class="space-y-4">
+
+      <!-- Campo de Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-[#E5E7EB]">Nombre de Usuario</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          required
+          class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
+        />
+        <div *ngIf="activationForm.get('username')?.hasError('required')" class="text-red-500 text-sm">
+          El nombre de usuario es obligatorio.
+        </div>
+      </div>
+
+      <!-- Campo de Correo -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-[#E5E7EB]">Correo Electrónico</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          required
+          class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
+        />
+        <div *ngIf="activationForm.get('email')?.hasError('required')" class="text-red-500 text-sm">
+          El correo es obligatorio.
+        </div>
+        <div *ngIf="activationForm.get('email')?.hasError('email')" class="text-red-500 text-sm">
+          Ingrese un correo válido.
+        </div>
+      </div>
+
+      <!-- Campo de PIN -->
+      <div>
+        <label for="pin" class="block text-sm font-medium text-[#E5E7EB]">PIN</label>
+        <input
+          id="pin"
+          type="password"
+          formControlName="pin"
+          required
+          class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
+        />
+        <div *ngIf="activationForm.get('pin')?.hasError('required')" class="text-red-500 text-sm">
+          El PIN es obligatorio.
+        </div>
+      </div>
+
+      <!-- Botón de Activar -->
+      <button
+        type="submit"
+        [disabled]="activationForm.invalid"
+        class="w-full bg-[#6A5ACD] text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] focus:ring-offset-2 disabled:bg-gray-500">
+        Activar Cuenta
+      </button>
+    </form>
+  </div>
+</div>
