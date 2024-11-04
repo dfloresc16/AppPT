@@ -7,7 +7,7 @@ import { AuthLayoutComponent } from './presentation/layouts/authLayout/authLayou
 export const routes: Routes = [
   // Rutas del layout de autenticación
   {
-    path: 'auth',
+    path: '',
     component: AuthLayoutComponent, // Layout para autenticación
     children: [
       {
@@ -29,7 +29,7 @@ export const routes: Routes = [
   },
   // Rutas del dashboard (protección con guard)
   {
-    path: '',
+    path: 'dashboard',
     component: DashboardLayoutComponent,
     // canActivate: [isAuthenticatedGuard], // Verifica si el usuario está autenticado
     children: [
@@ -68,7 +68,7 @@ export const routes: Routes = [
   // Redirección por defecto
   {
     path: '**',
-    redirectTo: 'auth/login', // Redirige a login si la ruta no existe
+    redirectTo: 'login', // Redirige a login si la ruta no existe
     pathMatch: 'full',
   },
 ];
