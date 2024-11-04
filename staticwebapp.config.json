@@ -1,6 +1,16 @@
 {
   "routes": [
     {
+      "route": "/dashboard/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/auth/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
       "route": "/*",
       "serve": "/index.html",
       "statusCode": 200
