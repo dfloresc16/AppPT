@@ -1,21 +1,8 @@
 {
-  "routes": [
-    {
-      "route": "/dashboard/*",
-      "serve": "/index.html",
-      "statusCode": 200
-    },
-    {
-      "route": "/auth/*",
-      "serve": "/index.html",
-      "statusCode": 200
-    },
-    {
-      "route": "/*",
-      "serve": "/index.html",
-      "statusCode": 200
-    }
-  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*.{png,jpg,gif,ico}", "/*.{css,scss,js}"]
+  },
   "mimeTypes": {
     ".js": "application/javascript",
     ".css": "text/css"
