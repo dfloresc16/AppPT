@@ -1,36 +1,13 @@
 {
   "routes": [
     {
-      "route": "/dashboard/*",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/login",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/register",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/activate",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/curriculum-vitae",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/record-interview",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/interview",
-      "rewrite": "/index.html"
-    },
-    {
       "route": "/*",
-      "rewrite": "/index.html"
+      "serve": "/index.html",
+      "statusCode": 200
     }
-  ]
+  ],
+  "mimeTypes": {
+    ".js": "application/javascript",
+    ".css": "text/css"
+  }
 }
