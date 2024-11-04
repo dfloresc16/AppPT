@@ -1,0 +1,1 @@
+import{Db as a,aa as o,fb as n}from"./chunk-OZKSLEUV.js";var d=(()=>{class e{static{this.\u0275fac=function(t){return new(t||e)}}static{this.\u0275cmp=o({type:e,selectors:[["app-audio-to-text-page"]],standalone:!0,features:[n],decls:0,vars:0,template:function(t,r){},dependencies:[a],encapsulation:2,changeDetection:0})}}return e})();export{d as default};
