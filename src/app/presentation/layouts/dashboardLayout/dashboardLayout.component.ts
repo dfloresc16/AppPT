@@ -21,7 +21,13 @@ export class DashboardLayoutComponent {
 
 
 
-  public routes = routes[1].children?.filter( (route) => route.data);
+  public routes = routes[2].children?.filter( (route) => route.data);
+
+  constructor() {
+    // Imprimir el contenido de 'routes' en la consola
+    console.log(this.routes);
+  }
+
 
 
 }

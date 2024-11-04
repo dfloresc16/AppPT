@@ -6,7 +6,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-sidebar-menu-item',
   standalone: true,
   imports: [
-    RouterModule
+    RouterModule,
+    CommonModule
   ],
   templateUrl: './sidebarMenuItem.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
