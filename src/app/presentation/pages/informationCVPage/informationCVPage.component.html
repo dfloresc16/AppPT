@@ -1,8 +1,10 @@
 <div class="container mx-auto p-6">
   <ul class="mb-4">
-    <li *ngFor="let entry of entries" class="p-2 rounded mb-2" style="background-color: #2f3e51; color: white;">
+    <p *ngIf="!curriculumVitae.cvFieldsDTOs?.length">No hay datos disponibles</p>
+    <li *ngFor="let entry of curriculumVitae.cvFieldsDTOs" class="p-2 rounded mb-2" style="background-color: #2f3e51; color: white;">
       {{ entry.category }} - {{ entry.field }} - {{ entry.level }}
     </li>
+
   </ul>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">

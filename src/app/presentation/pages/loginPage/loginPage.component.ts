@@ -6,13 +6,14 @@ import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
 
 
 @Component({
   selector: 'login-page',
   templateUrl: './loginPage.component.html',
   standalone: true,
-  imports:[
+  imports: [
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule
@@ -41,10 +42,10 @@ export default class LoginPageComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const userLogin: UserLoginDTO = this.loginForm.value;
-
       this.authService.login(userLogin).subscribe({
         next: (response) => {
           if (response.success && response.body?.token) {
+            console.log(userLogin.id)
             this.handleLoginSuccess(response.body.token, userLogin);
           } else {
             this.showErrorAlert('Error', response.errorMessage || 'Error desconocido');
@@ -59,16 +60,52 @@ export default class LoginPageComponent implements OnInit {
 
   private handleLoginSuccess(token: string, userLogin: UserLoginDTO): void {
     sessionStorage.setItem('access_token', token);
-    sessionStorage.setItem('emailUser', userLogin.email);
+    this.getDataUser(userLogin);
     this.showSuccessAlert('¡Login exitoso!', 'Bienvenido a APP PT');
     this.router.navigateByUrl('/dashboard');
+  }
+
+  private getDataUser(userLogin: UserLoginDTO): void {
+    console.log(`userLogin.email :: ${userLogin.email}`);
+
+    this.authService.getUserByEmail(userLogin.email).subscribe({
+      next: (response) => {
+        if (response && response.body) {
+          const user: UserRespLoginDTO = response.body;
+
+          // Guardar cada propiedad individualmente en Session Storage
+          sessionStorage.setItem('userId', user.id.toString());
+          sessionStorage.setItem('name', user.name);
+          sessionStorage.setItem('lastName', user.lastName);
+          sessionStorage.setItem('userName', user.userName);
+          sessionStorage.setItem('phoneNumber', user.phoneNumber);
+          sessionStorage.setItem('email', user.email);
+          sessionStorage.setItem('pin', user.pin);
+          sessionStorage.setItem('active', user.active.toString());
+        } else {
+          Swal.fire({
+            icon: 'info',
+            title: 'No se encontraron datos del usuario',
+            text: 'El usuario no está registrado en el sistema.',
+          });
+        }
+      },
+      error: (error) => {
+        const errorMessage = error.message || 'Ocurrió un error inesperado al buscar el usuario.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMessage,
+        });
+      },
+    });
   }
 
 
   // Redirección a la página de registro
   redirectToSignUp(): void {
     console.log('Redirigiendo a Crear Cuenta...');
-    this.router.navigate(['/sign-up']); // Cambia la ruta según sea necesario
+    this.router.navigate(['/auth/register']); // Cambia la ruta según sea necesario
   }
 
   // Validador personalizado para el dominio del correo

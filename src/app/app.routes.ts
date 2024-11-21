@@ -26,7 +26,7 @@ export const routes: Routes = [
           import('./presentation/pages/registerPage/registerPage.component').then((m) => m.default),
       },
       {
-        path: 'activate',
+        path: 'active',
         loadComponent: () =>
           import('./presentation/pages/activePage/activePage.component').then((m) => m.default),
       },

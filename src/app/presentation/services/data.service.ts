@@ -1,10 +1,19 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { CurriculumVitaeDTO } from '../../interfaces/CurriculumVitaeDTO';
+import { ApiResponse } from '../../interfaces/ApiResponse';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
+
+  private apiUrl = `${environment.baseUrl}`
+  // private apiUrl = "http://192.168.3.3:8082/cv/createCV"
+
+  constructor(private http: HttpClient) {}
   // Estructura de datos según las categorías
   private data = {
     Frontend: [
@@ -26,5 +35,35 @@ export class DataService {
 
   getData(): Observable<any> {
     return of(this.data);
+  }
+
+  getDataCV(userId: number): Observable<ApiResponse<CurriculumVitaeDTO>> {
+    return this.http.get<ApiResponse<CurriculumVitaeDTO>>(
+      `${this.apiUrl}/cv/getDataCV/${userId}` // Endpoint para obtener datos del CV
+    ).pipe(
+      tap({
+        next: (response) => console.log('Datos del CV obtenidos exitosamente:', response),
+        error: (error) => console.error('Error al obtener los datos del CV:', error),
+      }),
+      map((response) => response),
+      catchError((error) => throwError(() => error.error))
+    );
+  }
+
+
+  crearCV(cvDTO: CurriculumVitaeDTO,userId: number): Observable<ApiResponse<CurriculumVitaeDTO>> {
+    console.log("entre");
+
+    return this.http.post<ApiResponse<any>>(
+      `${this.apiUrl}/cv/createCV/${userId}`, // Endpoint para crear el CV
+      cvDTO // Envía el objeto cvDTO en el cuerpo de la solicitud
+    ).pipe(
+      tap({
+        next: (response) => console.log('Respuesta exitosa:', response),
+        error: (error) => console.error('Error en la solicitud:', error)
+      }),
+      map((response) => response),
+      catchError((error) => throwError(() => error.error))
+    );
   }
 }

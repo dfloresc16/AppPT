@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { FormsModule } from '@angular/forms';
 import { CategoryData } from '../../../interfaces/categoryData';
-import { Field } from '../../../interfaces/field';
-import { EntryDTO } from '../../../interfaces/entryDTO';
+import { CVFieldDTO } from '../../../interfaces/CVFieldDTO';
+import { CurriculumVitaeDTO } from '../../../interfaces/CurriculumVitaeDTO';
 
 @Component({
   selector: 'app-information-cvpage',
@@ -14,7 +14,7 @@ import { EntryDTO } from '../../../interfaces/entryDTO';
     FormsModule
   ],
   templateUrl: './informationCVPage.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush, // Optamos por OnPush para optimización
 })
 export default class InformationCVPageComponent {
   categories: string[] = [];
@@ -26,12 +26,17 @@ export default class InformationCVPageComponent {
   selectedLevel = '';
 
   availableOptions: CategoryData = {};
-  entries: EntryDTO[] = []; // Almacena las entradas agregadas
 
-  constructor(private dataService: DataService) {}
+  // Objeto CurriculumVitaeDTO para almacenar las entradas
+  curriculumVitae: CurriculumVitaeDTO = {
+    cvFieldsDTOs: [] // Inicializa correctamente como un array vacío
+  };
+
+  constructor(private dataService: DataService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadCVData(); // Cargar datos del CV existente
+    this.loadData();   // Cargar datos para categorías y niveles
   }
 
   loadData(): void {
@@ -39,6 +44,29 @@ export default class InformationCVPageComponent {
       this.availableOptions = data;
       this.categories = Object.keys(data);
     });
+  }
+
+  loadCVData(): void {
+    const userId: number = Number(sessionStorage.getItem('userId'));
+    if (userId) {
+      this.dataService.getDataCV(userId).subscribe(
+        (response) => {
+          if (response.body?.cvFieldsDTOs && Array.isArray(response.body.cvFieldsDTOs)) {
+            this.curriculumVitae = response.body;
+            this.curriculumVitae.cvFieldsDTOs = [...response.body.cvFieldsDTOs];
+            console.log('Datos del CV cargados:', this.curriculumVitae.cvFieldsDTOs);
+            this.cdr.markForCheck(); // Forzar detección de cambios si usamos OnPush
+          } else {
+            console.warn('cvFieldsDTOs no es un array válido o está vacío.');
+          }
+        },
+        (error) => {
+          console.error('Error al cargar datos del CV:', error);
+        }
+      );
+    } else {
+      console.warn('No se encontró userId en sessionStorage.');
+    }
   }
 
   onCategoryChange(): void {
@@ -56,12 +84,15 @@ export default class InformationCVPageComponent {
 
   addEntry(): void {
     if (this.selectedCategory && this.selectedField && this.selectedLevel) {
-      const newEntry: EntryDTO = {
+      const newEntry: CVFieldDTO = {
         category: this.selectedCategory,
         field: this.selectedField,
         level: this.selectedLevel,
       };
-      this.entries.push(newEntry);
+      this.curriculumVitae.cvFieldsDTOs.push(newEntry);
+
+      // Forzar detección de cambios si usamos ChangeDetectionStrategy.OnPush
+      this.cdr.markForCheck();
 
       // Limpiar los combobox
       this.selectedCategory = '';
@@ -73,7 +104,19 @@ export default class InformationCVPageComponent {
   }
 
   createOrUpdate(): void {
-    console.log('Entradas:', this.entries);
-    alert('Datos creados/actualizados exitosamente.');
+    console.log('Llamando a crearCV con:', this.curriculumVitae);
+    const userId: number = Number(sessionStorage.getItem('userId'));
+    if (userId) {
+      this.dataService.crearCV(this.curriculumVitae, userId).subscribe(
+        (response) => {
+          console.log('Respuesta recibida en el componente:', response);
+        },
+        (error) => {
+          console.error('Error en el componente:', error);
+        }
+      );
+    } else {
+      console.warn('No se encontró userId en sessionStorage.');
+    }
   }
 }

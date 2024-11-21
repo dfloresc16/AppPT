@@ -5,4 +5,6 @@ export interface UserRespLoginDTO {
   userName: string;
   phoneNumber: string;
   email: string;
+  pin: string;
+  active: boolean;
 }

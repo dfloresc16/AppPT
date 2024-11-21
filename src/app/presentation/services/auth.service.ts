@@ -9,6 +9,7 @@ import { catchError, map, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Activacion } from '../../interfaces/Activation';
+import { UserRespLoginDTO } from '../../interfaces/UserRespLoginDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,8 @@ export class AuthService {
   }
 
   create(userData: UserDTO): Observable<ApiResponse<UserDTO>> {
-    return this.http.post<ApiResponse<UserDTO>>(`${this.apiUrl}/auth/create`, { data: userData }).pipe(
+    console.log('User data being sent:', userData);
+    return this.http.post<ApiResponse<UserDTO>>(`${this.apiUrl}/auth/create`, userData).pipe(
       map((response) => response),
       catchError((error) => throwError(() => error.error))
     );
@@ -45,20 +47,19 @@ export class AuthService {
   }
 
 
-  getUser(userData: UserDTO): Observable<ApiResponse<any>> {
-    const params = new HttpParams()
-      .set('userId', userData.userId.toString())
-      .set('userName', userData.userName);
+  getUserByEmail(email: string): Observable<ApiResponse<UserRespLoginDTO>> {
+    const params = new HttpParams().set('email', email); // Pasamos 'email' como query parameter
 
     // Cambiamos la solicitud a GET y añadimos los query parameters
     return this.http.get<ApiResponse<any>>(
-      `${this.apiUrl}/user/getUser`,
+      `${this.apiUrl}/user/getUserByEmail`, // Endpoint ajustado a "/user/getUserByEmail"
       { params } // Agregamos los parámetros como query parameters
     ).pipe(
       map((response) => response),
-      catchError((error) => throwError(() => error.error))
+      catchError((error) => throwError(() => error.error)) // Manejo de errores
     );
   }
+
 
   // auth.service.ts
   logout(): void {
@@ -68,8 +69,9 @@ export class AuthService {
 
 
   activarCuenta(activation: Activacion):Observable<ApiResponse<any>>{
-    return this.http.post<ApiResponse<any>>(
-      `${this.apiUrl}/auth/validate?token=${encodeURIComponent('')}`,
+    console.log(` activation  ::: ${activation.pin}`)
+    return this.http.get<ApiResponse<any>>(
+      `${this.apiUrl}/auth/active?pin=${activation.pin}`,
       {}
     ).pipe(
       map((response) => response),

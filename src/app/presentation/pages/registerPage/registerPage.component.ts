@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, 
 import { AuthService } from './../../services/auth.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
@@ -19,7 +20,7 @@ import { CommonModule } from '@angular/common';
 export default class RegisterPageComponent {
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService,private router: Router) {
     this.registerForm = this.fb.group(
       {
         firstName: ['', Validators.required],
@@ -33,10 +34,23 @@ export default class RegisterPageComponent {
       { validators: this.passwordsMatchValidator }
     );
   }
-
   onSubmit(): void {
     if (this.registerForm.valid) {
-      const userData: UserDTO = this.registerForm.value;
+      const formValues = this.registerForm.value;
+
+      const userData: UserDTO = {
+        userId: 0, // Valor por defecto
+        name: formValues.firstName,
+        lastName: formValues.lastName,
+        userName: formValues.userName,
+        phoneNumber: formValues.phoneNumber,
+        password: formValues.password,
+        email: formValues.email,
+        pin: ""
+      };
+
+      console.log(userData);
+
       this.authService.create(userData).subscribe(
         (response: ApiResponse<UserDTO>) => {
           if (response.success) {
@@ -44,12 +58,14 @@ export default class RegisterPageComponent {
               icon: 'success',
               title: 'Usuario creado',
               text: `El usuario ${response.body.userName} ha sido creado exitosamente.`,
+            }).then(() => {
+              this.router.navigate(['/auth/active']);
             });
           } else {
             Swal.fire({
               icon: 'error',
               title: 'Error al crear el usuario',
-              text: response.message || 'Ocurrió un error inesperado.',
+              text:  'Ocurrió un error inesperado.',
             });
           }
         },
@@ -57,7 +73,7 @@ export default class RegisterPageComponent {
           Swal.fire({
             icon: 'error',
             title: 'Error al crear el usuario',
-            text: error.errorMessage || 'Ocurrió un error inesperado.',
+            text: 'Ocurrió un error inesperado.',
           });
         }
       );
@@ -72,10 +88,10 @@ export default class RegisterPageComponent {
 
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.value || '';
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecialChar = /[@]/.test(password);
-    const validLength = password.length > 8;
+    const hasUpperCase = /[A-Z]/.test(password); // Verifica mayúsculas
+    const hasNumber = /[0-9]/.test(password);    // Verifica números
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password); // Verifica caracteres especiales
+    const validLength = password.length > 8;     // Verifica longitud
 
     const valid = hasUpperCase && hasNumber && hasSpecialChar && validLength;
     return valid ? null : { passwordStrength: true };
