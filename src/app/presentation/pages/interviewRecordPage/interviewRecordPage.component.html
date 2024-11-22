@@ -53,7 +53,7 @@
   <!-- Detalles de la entrevista seleccionada -->
   <div *ngIf="selectedInterviewResults" class="mt-8">
     <h2 class="text-xl font-bold mb-4">Interview Details</h2>
-    <div *ngFor="let result of selectedInterviewResults" class="mb-4 p-4 border rounded-lg bg-gray-50">
+    <div *ngFor="let result of selectedInterviewResults" class="mb-4 p-4 border rounded-lg bg-gray-50" style="color: black;">
       <p><strong>Question:</strong> {{ result.bodyQuestion }}</p>
       <p><strong>Answer:</strong> {{ result.answerUser }}</p>
       <p><strong>Score:</strong> {{ result.score }}</p>

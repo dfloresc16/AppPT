@@ -25,7 +25,7 @@ export default class HomePageComponent {
   messages: { text: string; isGpt: boolean }[] = [];
   questionQueue: string[] = [];
   interviewId: number = 0;
-  questionId: number = 0;
+  questionId: number[] = [];
   userId: number = 0;
   answers: QuestionJoinAnswerInputDTO[] = [];
   cont: number = 0;
@@ -47,7 +47,10 @@ export default class HomePageComponent {
 
       if (!isGpt) {
         // Almacenar respuesta del usuario
-        const currentQuestionId = this.questionId;
+        const currentQuestionId = this.questionId[this.cont];
+        this.cont++;
+        console.log("currentQuestionId: " + currentQuestionId);
+
         if (currentQuestionId) {
           this.answers.push({
             questionId: currentQuestionId,
@@ -67,8 +70,6 @@ export default class HomePageComponent {
       this.sendUserAnswers();
     }
   }
-
-  // Método para consumir el servicio y procesar las preguntas
   fetchAndProcessInterview() {
     console.log('Intentando obtener preguntas para userId:', this.userId);
 
@@ -82,12 +83,13 @@ export default class HomePageComponent {
         console.log('Respuesta obtenida del servicio:', response);
 
         if (response.body && response.body.questionDTOs) {
+          // Mapear los `questionId` a un arreglo
+          this.questionId = response.body.questionDTOs.map(q => q.questionId);
+          console.log("this.questionId.length :: " + this.questionId.length);
+          // Mapear las preguntas en sí
           const questions = response.body.questionDTOs.map(q => q.bodyQuestion);
-          this.interviewId = response.body.interviewId;
-          console.log(`this.cont :: ${this.cont}`);
 
-          this.questionId = response.body.questionDTOs[this.cont].questionId;
-          this.cont++;
+          this.interviewId = response.body.interviewId;
           this.questionQueue = [...questions];
           console.log('Preguntas obtenidas y almacenadas en questionQueue:', this.questionQueue);
 
