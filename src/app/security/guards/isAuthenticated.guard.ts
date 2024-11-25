@@ -1,15 +1,18 @@
-import type { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 
 export const isAuthenticatedGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const token = localStorage.getItem('access_token'); // Valida el token en localStorage
 
-  const url = state.url;
-  localStorage.setItem('url',url);
+  if (!token) {
+    // Si no está autenticado, guarda la URL y redirige a login
+    localStorage.setItem('url', state.url);
+    console.log('Acceso denegado. Redirigiendo a /auth/login');
+    router.navigate(['/auth/login']);
+    return false;
+  }
 
-
-
-
-  console.log('isAuthenticatedGuard');
-  console.log({url});
-
+  console.log('Usuario autenticado');
   return true;
 };

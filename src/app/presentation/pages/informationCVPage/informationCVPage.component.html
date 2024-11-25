@@ -1,14 +1,18 @@
 <div class="container mx-auto p-6">
   <ul class="mb-4">
     <p *ngIf="!curriculumVitae.cvFieldsDTOs?.length">No hay datos disponibles</p>
-    <li *ngFor="let entry of curriculumVitae.cvFieldsDTOs" class="p-2 rounded mb-2" style="background-color: #2f3e51; color: white;">
-      {{ entry.category }} - {{ entry.field }} - {{ entry.level }}
+    <li *ngFor="let entry of curriculumVitae.cvFieldsDTOs; let i = index" class="flex justify-between items-center p-2 rounded mb-2" style="background-color: #2f3e51; color: white;">
+      <span>{{ entry.category }} - {{ entry.field }} - {{ entry.level }}</span>
+      <button
+        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+        (click)="removeEntry(i)"
+      >
+        Eliminar
+      </button>
     </li>
-
   </ul>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-    <!-- Categoría -->
     <div>
       <label class="text-lg font-semibold mb-2">Categoría</label>
       <select
@@ -24,7 +28,6 @@
       </select>
     </div>
 
-    <!-- Field -->
     <div>
       <label class="text-lg font-semibold mb-2">Field</label>
       <select
@@ -41,7 +44,6 @@
       </select>
     </div>
 
-    <!-- Level -->
     <div>
       <label class="text-lg font-semibold mb-2">Level</label>
       <select
@@ -67,10 +69,21 @@
     </button>
 
     <button
+      *ngIf="!isUpdateMode"
+      [disabled]="!hasChanges()"
       class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-      (click)="createOrUpdate()"
+      (click)="createCV()"
     >
-      Crear/Actualizar
+      Crear CV
+    </button>
+
+    <button
+      *ngIf="isUpdateMode"
+      [disabled]="!hasChanges()"
+      class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
+      (click)="updateCV()"
+    >
+      Actualizar CV
     </button>
   </div>
 </div>

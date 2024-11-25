@@ -1,14 +1,15 @@
 <div class="chat-container">
-  <div class="chat-messages">
+  <!-- Mensajes del chat -->
+  <div class="chat-messages" *ngIf="messages.length > 0">
     <div class="grid gap-y-2">
       <ng-container *ngFor="let message of messages; trackBy: trackByIndex">
-        <!-- Mostrar mensaje del GPT -->
+        <!-- Mensaje del GPT -->
         <app-chat-message
           *ngIf="message.isGpt && message.text.trim() !== ''"
           [text]="message.text">
         </app-chat-message>
 
-        <!-- Mostrar mensaje del usuario -->
+        <!-- Mensaje del usuario -->
         <app-my-message
           *ngIf="!message.isGpt && message.text.trim() !== ''"
           [text]="message.text">
@@ -18,5 +19,8 @@
   </div>
 
   <!-- Componente de captura de audio -->
-  <app-audio-message-box (messageCaptured)="handleMessageCaptured($event)"></app-audio-message-box>
+  <app-audio-message-box
+    (messageCaptured)="handleMessageCaptured($event)"
+    *ngIf="messages.length > 0">
+  </app-audio-message-box>
 </div>

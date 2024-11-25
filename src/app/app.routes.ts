@@ -36,13 +36,13 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardLayoutComponent,
-    // canActivate: [isAuthenticatedGuard], // Verifica si el usuario está autenticado
+    canActivate: [isAuthenticatedGuard], // Verifica si el usuario está autenticado
     children: [
       {
-        path: 'home',
+        path: 'interview',
         loadComponent: () =>
           import('./presentation/pages/homePage/homePage.component').then((m) => m.default),
-        data: { icon: 'fa-solid fa-house', title: 'Home', description: 'Página principal' },
+        data: { icon: 'fa-solid fa-microphone', title: 'Interview', description: 'Realizar entrevista' },
       },
       {
         path: 'curriculum-vitae',
@@ -57,11 +57,16 @@ export const routes: Routes = [
         data: { icon: 'fa-solid fa-calendar-check', title: 'Interview Record', description: 'Historial de entrevistas' },
       },
       {
-        path: 'interview',
-        loadComponent: () =>
-          import('./presentation/pages/audioToTextPage/audioToTextPage.component').then((m) => m.default),
-        data: { icon: 'fa-solid fa-microphone', title: 'Interview', description: 'Convertir audio a texto' },
+        path: 'login',
+        redirectTo: 'auth/login',
+        data: { icon: 'fa-solid fa-right-from-bracket', title: 'Cerrar Sesion', description: '' },
       },
+      // {
+      //   path: 'interview',
+      //   loadComponent: () =>
+      //     import('./presentation/pages/audioToTextPage/audioToTextPage.component').then((m) => m.default),
+      //   data: { icon: 'fa-solid fa-microphone', title: 'Interview', description: 'Convertir audio a texto' },
+      // },
     ],
   },
   // Redirección por defecto

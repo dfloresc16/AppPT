@@ -1,6 +1,12 @@
 <div class="flex items-center justify-center min-h-screen bg-[#111827]">
-  <div class="bg-[hsl(215,28%,17%)] shadow-md rounded-lg p-8 max-w-lg w-full">
+  <div class="bg-[hsl(215,28%,17%)] shadow-md rounded-lg p-8 max-w-lg w-full relative">
     <h2 class="text-2xl font-bold text-center mb-6 text-[#6A5ACD]">Crear Cuenta</h2>
+
+    <!-- Spinner mientras carga -->
+    <div *ngIf="isLoading" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg z-10">
+      <div class="w-16 h-16 border-4 border-t-[#6A5ACD] border-gray-300 rounded-full animate-spin"></div>
+    </div>
+
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
       <div class="grid grid-cols-2 gap-4">
         <div>
@@ -9,9 +15,10 @@
             type="text"
             formControlName="firstName"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.get('firstName')?.hasError('required')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.hasError('required')"
+            class="text-red-500 text-sm mt-1">
             El nombre es obligatorio.
           </div>
         </div>
@@ -21,9 +28,10 @@
             type="text"
             formControlName="lastName"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.get('lastName')?.hasError('required')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.hasError('required')"
+            class="text-red-500 text-sm mt-1">
             El apellido es obligatorio.
           </div>
         </div>
@@ -36,9 +44,10 @@
             type="text"
             formControlName="userName"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.get('userName')?.hasError('required')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.get('userName')?.touched && registerForm.get('userName')?.hasError('required')"
+            class="text-red-500 text-sm mt-1">
             El username es obligatorio.
           </div>
         </div>
@@ -48,9 +57,10 @@
             type="tel"
             formControlName="phoneNumber"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.get('phoneNumber')?.hasError('required')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('required')"
+            class="text-red-500 text-sm mt-1">
             El número de celular es obligatorio.
           </div>
         </div>
@@ -62,12 +72,15 @@
           type="email"
           formControlName="email"
           required
-          class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-        />
-        <div *ngIf="registerForm.get('email')?.hasError('required')" class="text-red-500 text-sm mt-1">
+          class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+        <div
+          *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')"
+          class="text-red-500 text-sm mt-1">
           El correo es obligatorio.
         </div>
-        <div *ngIf="registerForm.get('email')?.hasError('emailDomain')" class="text-red-500 text-sm mt-1">
+        <div
+          *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('emailDomain')"
+          class="text-red-500 text-sm mt-1">
           El correo debe tener dominio"&#64;"ipn.mx o "&#64;"alumno.ipn.mx.
         </div>
       </div>
@@ -79,13 +92,16 @@
             type="password"
             formControlName="password"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.get('password')?.hasError('required')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')"
+            class="text-red-500 text-sm mt-1">
             La contraseña es obligatoria.
           </div>
-          <div *ngIf="registerForm.get('password')?.hasError('passwordStrength')" class="text-red-500 text-sm mt-1">
-            La contraseña debe tener más de 8 caracteres, una mayúscula, un número y el carácter especial"&#64;".
+          <div
+            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('passwordStrength')"
+            class="text-red-500 text-sm mt-1">
+            La contraseña debe tener más de 8 caracteres, una mayúscula, un número y un carácter especial.
           </div>
         </div>
         <div>
@@ -94,9 +110,10 @@
             type="password"
             formControlName="confirmPassword"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
-          />
-          <div *ngIf="registerForm.hasError('passwordMismatch')" class="text-red-500 text-sm mt-1">
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div
+            *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
+            class="text-red-500 text-sm mt-1">
             Las contraseñas no coinciden.
           </div>
         </div>
@@ -104,7 +121,7 @@
 
       <button
         type="submit"
-        [disabled]="registerForm.invalid"
+        [disabled]="registerForm.invalid || isLoading"
         class="w-full bg-[#6A5ACD] text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] focus:ring-offset-2 disabled:bg-gray-500">
         Crear Cuenta
       </button>

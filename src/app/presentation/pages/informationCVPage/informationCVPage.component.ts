@@ -11,10 +11,10 @@ import { CurriculumVitaeDTO } from '../../../interfaces/CurriculumVitaeDTO';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './informationCVPage.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush, // Optamos por OnPush para optimización
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class InformationCVPageComponent {
   categories: string[] = [];
@@ -27,10 +27,12 @@ export default class InformationCVPageComponent {
 
   availableOptions: CategoryData = {};
 
-  // Objeto CurriculumVitaeDTO para almacenar las entradas
   curriculumVitae: CurriculumVitaeDTO = {
-    cvFieldsDTOs: [] // Inicializa correctamente como un array vacío
+    cvFieldsDTOs: [], // Inicializa correctamente como un array vacío
   };
+
+  originalData: string = ''; // Guarda el estado original del CV para validar cambios
+  isUpdateMode = false; // Bandera para determinar si se debe actualizar o crear
 
   constructor(private dataService: DataService, private cdr: ChangeDetectorRef) {}
 
@@ -52,21 +54,124 @@ export default class InformationCVPageComponent {
       this.dataService.getDataCV(userId).subscribe(
         (response) => {
           if (response.body?.cvFieldsDTOs && Array.isArray(response.body.cvFieldsDTOs)) {
-            this.curriculumVitae = response.body;
             this.curriculumVitae.cvFieldsDTOs = [...response.body.cvFieldsDTOs];
+            this.isUpdateMode = true; // Habilitar modo de actualización si se cargaron datos
+            this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Guardar estado original
             console.log('Datos del CV cargados:', this.curriculumVitae.cvFieldsDTOs);
-            this.cdr.markForCheck(); // Forzar detección de cambios si usamos OnPush
           } else {
+            this.isUpdateMode = false; // No hay datos, se habilita modo de creación
             console.warn('cvFieldsDTOs no es un array válido o está vacío.');
           }
+          this.cdr.markForCheck(); // Forzar detección de cambios si usamos OnPush
         },
         (error) => {
-          console.error('Error al cargar datos del CV:', error);
+          if (error.status === 404) {
+            console.warn('CV no encontrado.');
+            this.isUpdateMode = false; // No se encontró el CV, habilitar modo de creación
+            this.curriculumVitae.cvFieldsDTOs = []; // Inicializar como vacío
+            this.cdr.markForCheck();
+          } else {
+            console.error('Error al cargar datos del CV:', error);
+          }
         }
       );
     } else {
       console.warn('No se encontró userId en sessionStorage.');
     }
+  }
+
+  updateCV(): void {
+    const userId: number = Number(sessionStorage.getItem('userId'));
+    if (userId) {
+      console.log('Llamando a actualizarCV con:', this.curriculumVitae);
+
+      this.dataService.actualizarCV(this.curriculumVitae, userId).subscribe(
+        (response) => {
+          console.log('CV actualizado exitosamente:', response);
+          this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Actualizar estado original
+          this.cdr.markForCheck(); // Actualizar vista
+        },
+        (error) => {
+          console.error('Error al actualizar el CV:', error);
+        }
+      );
+    } else {
+      console.warn('No se encontró userId en sessionStorage.');
+    }
+  }
+
+  createCV(): void {
+    const userId: number = Number(sessionStorage.getItem('userId'));
+    if (userId) {
+      console.log('Llamando a crearCV con:', this.curriculumVitae);
+
+      this.dataService.crearCV(this.curriculumVitae, userId).subscribe(
+        (response) => {
+          console.log('CV creado exitosamente:', response);
+          this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Guardar estado original
+          this.isUpdateMode = true; // Cambiar a modo de actualización después de crear
+          this.cdr.markForCheck(); // Actualizar vista
+        },
+        (error) => {
+          console.error('Error al crear el CV:', error);
+        }
+      );
+    } else {
+      console.warn('No se encontró userId en sessionStorage.');
+    }
+  }
+
+  addEntry(): void {
+    if (this.selectedCategory && this.selectedField && this.selectedLevel) {
+      const newEntry: CVFieldDTO = {
+        category: this.selectedCategory,
+        field: this.selectedField,
+        level: this.selectedLevel,
+      };
+
+      // Validar duplicados
+      const exists = this.curriculumVitae.cvFieldsDTOs.some(
+        (entry) =>
+          entry.category === newEntry.category &&
+          entry.field === newEntry.field &&
+          entry.level === newEntry.level
+      );
+
+      if (!exists) {
+        this.curriculumVitae.cvFieldsDTOs = [
+          ...this.curriculumVitae.cvFieldsDTOs,
+          newEntry,
+        ]; // Actualizar el array con una nueva referencia
+
+        console.log('Entrada añadida:', newEntry);
+        console.log('cvFieldsDTOs actualizado:', this.curriculumVitae.cvFieldsDTOs);
+      } else {
+        console.warn('El elemento ya existe en el CV.');
+      }
+
+      this.cdr.markForCheck(); // Forzar detección de cambios si usamos OnPush
+
+      // Limpiar los combobox
+      this.selectedCategory = '';
+      this.selectedField = '';
+      this.selectedLevel = '';
+      this.fields = [];
+      this.levels = [];
+    } else {
+      console.warn('No se puede añadir entrada sin completar todos los campos.');
+    }
+  }
+
+  removeEntry(index: number): void {
+    this.curriculumVitae.cvFieldsDTOs.splice(index, 1); // Eliminar elemento por índice
+    console.log('Elemento eliminado. Nuevo estado:', this.curriculumVitae.cvFieldsDTOs);
+    this.cdr.markForCheck(); // Forzar detección de cambios
+  }
+
+  hasChanges(): boolean {
+    return (
+      JSON.stringify(this.curriculumVitae.cvFieldsDTOs) !== this.originalData
+    ); // Compara con el estado original
   }
 
   onCategoryChange(): void {
@@ -80,43 +185,5 @@ export default class InformationCVPageComponent {
       (item) => item.field === this.selectedField
     );
     this.levels = fieldData ? fieldData.levels : [];
-  }
-
-  addEntry(): void {
-    if (this.selectedCategory && this.selectedField && this.selectedLevel) {
-      const newEntry: CVFieldDTO = {
-        category: this.selectedCategory,
-        field: this.selectedField,
-        level: this.selectedLevel,
-      };
-      this.curriculumVitae.cvFieldsDTOs.push(newEntry);
-
-      // Forzar detección de cambios si usamos ChangeDetectionStrategy.OnPush
-      this.cdr.markForCheck();
-
-      // Limpiar los combobox
-      this.selectedCategory = '';
-      this.selectedField = '';
-      this.selectedLevel = '';
-      this.fields = [];
-      this.levels = [];
-    }
-  }
-
-  createOrUpdate(): void {
-    console.log('Llamando a crearCV con:', this.curriculumVitae);
-    const userId: number = Number(sessionStorage.getItem('userId'));
-    if (userId) {
-      this.dataService.crearCV(this.curriculumVitae, userId).subscribe(
-        (response) => {
-          console.log('Respuesta recibida en el componente:', response);
-        },
-        (error) => {
-          console.error('Error en el componente:', error);
-        }
-      );
-    } else {
-      console.warn('No se encontró userId en sessionStorage.');
-    }
   }
 }

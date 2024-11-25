@@ -66,4 +66,20 @@ export class DataService {
       catchError((error) => throwError(() => error.error))
     );
   }
+
+
+  actualizarCV(cvDTO: CurriculumVitaeDTO, userId: number): Observable<ApiResponse<CurriculumVitaeDTO>> {
+    return this.http.put<ApiResponse<CurriculumVitaeDTO>>(
+      `${this.apiUrl}/cv/updateCV/${userId}`, // Endpoint para actualizar el CV
+      cvDTO // Envía el objeto cvDTO en el cuerpo de la solicitud
+    ).pipe(
+      tap({
+        next: (response) => console.log('CV actualizado exitosamente:', response),
+        error: (error) => console.error('Error al actualizar el CV:', error),
+      }),
+      map((response) => response),
+      catchError((error) => throwError(() => error.error)) // Manejo de errores
+    );
+  }
+
 }

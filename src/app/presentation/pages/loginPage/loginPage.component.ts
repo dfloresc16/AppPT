@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
 
-
 @Component({
   selector: 'login-page',
   templateUrl: './loginPage.component.html',
@@ -21,8 +20,8 @@ import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
 })
 export default class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
+  isLoading = false; // Estado para manejar el spinner
 
-  // Inyecta los servicios necesarios
   private router = inject(Router);
   private authService = inject(AuthService);
 
@@ -34,24 +33,27 @@ export default class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('LoginPageComponent loaded'); // Confirmación en consola
+    console.log('LoginPageComponent loaded');
+    sessionStorage.clear(); // Limpia el sessionStorage al cargar el login
   }
 
-  // Lógica del envío del formulario
-  // login.component.ts
+
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.isLoading = true; // Muestra el spinner
       const userLogin: UserLoginDTO = this.loginForm.value;
+
       this.authService.login(userLogin).subscribe({
         next: (response) => {
+          this.isLoading = false; // Oculta el spinner
           if (response.success && response.body?.token) {
-            console.log(userLogin.id)
             this.handleLoginSuccess(response.body.token, userLogin);
           } else {
             this.showErrorAlert('Error', response.errorMessage || 'Error desconocido');
           }
         },
         error: (error) => {
+          this.isLoading = false; // Oculta el spinner
           this.showErrorAlert('Error', error.errorMessage || 'Error en el servidor');
         },
       });
@@ -66,14 +68,11 @@ export default class LoginPageComponent implements OnInit {
   }
 
   private getDataUser(userLogin: UserLoginDTO): void {
-    console.log(`userLogin.email :: ${userLogin.email}`);
-
     this.authService.getUserByEmail(userLogin.email).subscribe({
       next: (response) => {
         if (response && response.body) {
           const user: UserRespLoginDTO = response.body;
 
-          // Guardar cada propiedad individualmente en Session Storage
           sessionStorage.setItem('userId', user.id.toString());
           sessionStorage.setItem('name', user.name);
           sessionStorage.setItem('lastName', user.lastName);
@@ -101,21 +100,16 @@ export default class LoginPageComponent implements OnInit {
     });
   }
 
-
-  // Redirección a la página de registro
   redirectToSignUp(): void {
-    console.log('Redirigiendo a Crear Cuenta...');
-    this.router.navigate(['/auth/register']); // Cambia la ruta según sea necesario
+    this.router.navigate(['/auth/register']);
   }
 
-  // Validador personalizado para el dominio del correo
   emailDomainValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value;
     const valid = /@(?:ipn\.mx|alumno\.ipn\.mx)$/.test(email);
     return valid ? null : { emailDomain: true };
   }
 
-  // Validador personalizado para la fortaleza de la contraseña
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -127,7 +121,6 @@ export default class LoginPageComponent implements OnInit {
     return valid ? null : { passwordStrength: true };
   }
 
-  // Mostrar alerta de éxito
   showSuccessAlert(title: string, text: string): void {
     Swal.fire({
       icon: 'success',
@@ -137,7 +130,6 @@ export default class LoginPageComponent implements OnInit {
     });
   }
 
-  // Mostrar alerta de error
   showErrorAlert(title: string, text: string): void {
     Swal.fire({
       icon: 'error',

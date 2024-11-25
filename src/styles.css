@@ -43,8 +43,27 @@ em {
   @apply flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-white bg-opacity-5 h-[calc(100vh-90px)] p-4 w-[calc(100vw-500px)];
 }
 
-.chat-messages {
+/* .chat-messages {
   @apply flex flex-col h-full overflow-x-auto mb-4 overflow-scroll;
+} */
+.chat-messages {
+  @apply flex flex-col h-full overflow-x-auto mb-4 overflow-y-auto; /* Scroll solo si es necesario */
+}
+
+.chat-messages::-webkit-scrollbar {
+  @apply w-2; /* Ancho del scrollbar */
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  @apply bg-gray-700 rounded-md; /* Fondo del track */
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  @apply bg-[#6A5ACD] rounded-md; /* Color del thumb */
+}
+
+.chat-messages:hover::-webkit-scrollbar-thumb {
+  @apply bg-indigo-600; /* Cambio de color del thumb al hacer hover */
 }
 
 

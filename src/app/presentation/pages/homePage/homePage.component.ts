@@ -8,6 +8,7 @@ import { AudioMessageBoxComponent } from '../../components/audio-boxes/audioMess
 import { InterviewJoinQuestionsDTO } from '../../../interfaces/InterviewJoinQuestionsDTO';
 import { ApiResponse } from '../../../interfaces/ApiResponse';
 import { QuestionJoinAnswerInputDTO } from '../../../interfaces/QuestionJoinAnswerInputDTO';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home-page',
@@ -29,47 +30,19 @@ export default class HomePageComponent {
   userId: number = 0;
   answers: QuestionJoinAnswerInputDTO[] = [];
   cont: number = 0;
+  interviewTimeout: any; // Temporizador para el límite de tiempo
+  hasAlertBeenShown = false; // Control para evitar mostrar múltiples alertas
 
   constructor(
     private cdr: ChangeDetectorRef,
     private interviewService: InterviewService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.userId = Number(sessionStorage.getItem('userId'));
     this.fetchAndProcessInterview();
   }
 
-  // Método para agregar un mensaje y procesar respuestas del usuario
-  addMessage(text: string, isGpt: boolean) {
-    if (text.trim() !== '') {
-      this.messages.push({ text, isGpt });
-
-      if (!isGpt) {
-        // Almacenar respuesta del usuario
-        const currentQuestionId = this.questionId[this.cont];
-        this.cont++;
-        console.log("currentQuestionId: " + currentQuestionId);
-
-        if (currentQuestionId) {
-          this.answers.push({
-            questionId: currentQuestionId,
-            bodyQuestion: this.messages[this.messages.length - 2]?.text || '',
-            answerUser: text,
-          });
-          console.log(`this.answers ${JSON.stringify(this.answers)}`);
-
-        }
-      }
-
-      this.cdr.detectChanges(); // Forzar actualización de la vista
-    }
-
-    // Verificar si la cola está vacía
-    if (this.questionQueue.length === 0 && !isGpt) {
-      this.sendUserAnswers();
-    }
-  }
   fetchAndProcessInterview() {
     console.log('Intentando obtener preguntas para userId:', this.userId);
 
@@ -78,35 +51,60 @@ export default class HomePageComponent {
       return;
     }
 
+    // Establecer límite de tiempo de 30 segundos
+    this.interviewTimeout = setTimeout(() => {
+      if (!this.hasAlertBeenShown) {
+        this.showNoInterviewsAlert(); // Mostrar alerta después del límite de tiempo
+      }
+    }, 30000); // 30 segundos
+
     this.interviewService.generateInterview(this.userId).subscribe({
       next: (response: ApiResponse<InterviewJoinQuestionsDTO>) => {
-        console.log('Respuesta obtenida del servicio:', response);
+        clearTimeout(this.interviewTimeout); // Cancelar el temporizador si se recibe respuesta
 
-        if (response.body && response.body.questionDTOs) {
-          // Mapear los `questionId` a un arreglo
+        if (response.body && response.body.questionDTOs && response.body.questionDTOs.length > 0) {
           this.questionId = response.body.questionDTOs.map(q => q.questionId);
-          console.log("this.questionId.length :: " + this.questionId.length);
-          // Mapear las preguntas en sí
           const questions = response.body.questionDTOs.map(q => q.bodyQuestion);
 
           this.interviewId = response.body.interviewId;
           this.questionQueue = [...questions];
-          console.log('Preguntas obtenidas y almacenadas en questionQueue:', this.questionQueue);
-
-          // Procesar la primera pregunta
           this.processNextQuestion();
         } else {
-          console.warn('No se encontraron preguntas en la respuesta:', response);
+          this.showNoInterviewsAlert(); // Mostrar alerta si no hay entrevistas disponibles
         }
       },
       error: (err: any) => {
+        clearTimeout(this.interviewTimeout); // Cancelar el temporizador si ocurre un error
         console.error('Error al generar la entrevista:', err);
-        this.addMessage('Ocurrió un error al generar la entrevista.', true);
+        this.showNoInterviewsAlert();
       },
     });
   }
 
-  // Método para procesar la siguiente pregunta
+  addMessage(text: string, isGpt: boolean) {
+    if (text.trim() !== '') {
+      this.messages.push({ text, isGpt });
+
+      if (!isGpt) {
+        const currentQuestionId = this.questionId[this.cont];
+        this.cont++;
+        if (currentQuestionId) {
+          this.answers.push({
+            questionId: currentQuestionId,
+            bodyQuestion: this.messages[this.messages.length - 2]?.text || '',
+            answerUser: text,
+          });
+        }
+      }
+
+      this.cdr.detectChanges();
+    }
+
+    if (this.questionQueue.length === 0 && !isGpt) {
+      this.sendUserAnswers();
+    }
+  }
+
   processNextQuestion() {
     if (this.questionQueue.length > 0) {
       const nextQuestion = this.questionQueue.shift();
@@ -114,13 +112,11 @@ export default class HomePageComponent {
     }
   }
 
-  // Método para manejar la captura de mensajes
   handleMessageCaptured(message: string) {
-    this.addMessage(message, false); // Mensaje del usuario
-    this.processNextQuestion(); // Procesar la siguiente pregunta
+    this.addMessage(message, false);
+    this.processNextQuestion();
   }
 
-  // Enviar respuestas del usuario al backend
   sendUserAnswers() {
     const qJaOsDTOs: QuestionJoinAnswerInputsDTO = {
       userId: this.userId,
@@ -137,6 +133,20 @@ export default class HomePageComponent {
         console.error('Error al enviar las respuestas:', err);
         this.addMessage('Ocurrió un error al enviar las respuestas.', true);
       },
+    });
+  }
+
+  // Mostrar alerta de que no hay entrevistas disponibles
+  showNoInterviewsAlert() {
+    this.hasAlertBeenShown = true; // Control para evitar múltiples alertas
+    Swal.fire({
+      icon: 'warning',
+      title: 'Entrevista no disponible',
+      text: 'No se encontraron entrevistas disponibles. Inténtalo más tarde.',
+      confirmButtonText: 'Aceptar',
+    }).then(() => {
+      this.messages = []; // Limpiar mensajes
+      this.questionQueue = []; // Limpiar preguntas
     });
   }
 

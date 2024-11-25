@@ -19,8 +19,9 @@ import { Router } from '@angular/router';
 })
 export default class RegisterPageComponent {
   registerForm: FormGroup;
+  isLoading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService,private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group(
       {
         firstName: ['', Validators.required],
@@ -34,12 +35,14 @@ export default class RegisterPageComponent {
       { validators: this.passwordsMatchValidator }
     );
   }
+
   onSubmit(): void {
     if (this.registerForm.valid) {
+      this.isLoading = true; // Activa el spinner
       const formValues = this.registerForm.value;
 
       const userData: UserDTO = {
-        userId: 0, // Valor por defecto
+        userId: 0,
         name: formValues.firstName,
         lastName: formValues.lastName,
         userName: formValues.userName,
@@ -49,10 +52,9 @@ export default class RegisterPageComponent {
         pin: ""
       };
 
-      console.log(userData);
-
       this.authService.create(userData).subscribe(
         (response: ApiResponse<UserDTO>) => {
+          this.isLoading = false; // Desactiva el spinner
           if (response.success) {
             Swal.fire({
               icon: 'success',
@@ -65,11 +67,12 @@ export default class RegisterPageComponent {
             Swal.fire({
               icon: 'error',
               title: 'Error al crear el usuario',
-              text:  'Ocurrió un error inesperado.',
+              text: 'Ocurrió un error inesperado.',
             });
           }
         },
         (error) => {
+          this.isLoading = false; // Desactiva el spinner
           Swal.fire({
             icon: 'error',
             title: 'Error al crear el usuario',
