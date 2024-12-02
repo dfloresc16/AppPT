@@ -134,7 +134,7 @@ export default class LoginPageComponent implements OnInit {
     Swal.fire({
       icon: 'error',
       title: title,
-      text: text,
+      text: 'Usuario y/o contraseña incorrectos',
       confirmButtonText: 'Aceptar'
     });
   }
