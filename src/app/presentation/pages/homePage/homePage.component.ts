@@ -93,6 +93,7 @@ export default class HomePageComponent {
             questionId: currentQuestionId,
             bodyQuestion: this.messages[this.messages.length - 2]?.text || '',
             answerUser: text,
+            answerLLM: ''
           });
         }
       }
