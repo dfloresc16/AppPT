@@ -170,7 +170,7 @@ export default class InformationCVPageComponent {
 
   hasChanges(): boolean {
     return (
-      JSON.stringify(this.curriculumVitae.cvFieldsDTOs) !== this.originalData
+      JSON.stringify(this.curriculumVitae.cvFieldsDTOs) !== this.originalData || this.curriculumVitae.cvFieldsDTOs.length === 0
     ); // Compara con el estado original
   }
 
