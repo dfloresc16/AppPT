@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CategoryData } from '../../../interfaces/categoryData';
 import { CVFieldDTO } from '../../../interfaces/CVFieldDTO';
 import { CurriculumVitaeDTO } from '../../../interfaces/CurriculumVitaeDTO';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-information-cvpage',
@@ -102,6 +103,16 @@ export default class InformationCVPageComponent {
 
   createCV(): void {
     const userId: number = Number(sessionStorage.getItem('userId'));
+
+    if (!this.curriculumVitae.cvFieldsDTOs?.length) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Datos incompletos',
+        text: 'Debe agregar valores antes de crear el CV.',
+      });
+      return; // Salir del método si no hay datos
+    }
+
     if (userId) {
       console.log('Llamando a crearCV con:', this.curriculumVitae);
 
@@ -111,13 +122,29 @@ export default class InformationCVPageComponent {
           this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Guardar estado original
           this.isUpdateMode = true; // Cambiar a modo de actualización después de crear
           this.cdr.markForCheck(); // Actualizar vista
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: 'El CV se ha creado exitosamente.',
+          });
         },
         (error) => {
           console.error('Error al crear el CV:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al crear el CV. Por favor, intente nuevamente.',
+          });
         }
       );
     } else {
       console.warn('No se encontró userId en sessionStorage.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se encontró el identificador de usuario en la sesión.',
+      });
     }
   }
 
