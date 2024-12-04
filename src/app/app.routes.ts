@@ -26,6 +26,11 @@ export const routes: Routes = [
           import('./presentation/pages/registerPage/registerPage.component').then((m) => m.default),
       },
       {
+        path: 'recovery',
+        loadComponent: () =>
+          import('./presentation/pages/recoveryPassword/recoveryPassword.component').then((m) => m.default),
+      },
+      {
         path: 'active',
         loadComponent: () =>
           import('./presentation/pages/activePage/activePage.component').then((m) => m.default),

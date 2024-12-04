@@ -104,6 +104,10 @@ export default class LoginPageComponent implements OnInit {
     this.router.navigate(['/auth/register']);
   }
 
+  redirecToRecoveryPassword(): void{
+    this.router.navigate(['/auth/recovery']);
+  }
+
   emailDomainValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value;
     const valid = /@(?:ipn\.mx|alumno\.ipn\.mx)$/.test(email);

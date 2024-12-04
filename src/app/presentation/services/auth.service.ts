@@ -63,10 +63,9 @@ export class AuthService {
 
   // auth.service.ts
   logout(): void {
-    sessionStorage.removeItem('access_token'); // Elimina el token de sessionStorage
+    sessionStorage.clear();
     this.router.navigateByUrl('/login');
   }
-
 
   activarCuenta(activation: Activacion):Observable<ApiResponse<any>>{
     console.log(` activation  ::: ${activation.pin}`)
@@ -79,6 +78,23 @@ export class AuthService {
     );
   }
 
+  sendPin(email: string): Observable<ApiResponse<any>> {
+    const params = new HttpParams().set('email', email); // Pasamos 'email' como query parameter    // Cambiamos la solicitud a GET y añadimos los query parameters
+    return this.http.get<ApiResponse<any>>(
+      `${this.apiUrl}/auth/sendPIN`, // Endpoint ajustado a "/user/getUserByEmail"
+      { params } // Agregamos los parámetros como query parameters
+    ).pipe(
+      map((response) => response),
+      catchError((error) => throwError(() => error.error)) // Manejo de errores
+    );
+  }
+
+  recoveryPassword(userData: UserDTO): Observable<ApiResponse<TokenDTO>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/auth/recoveryPass`, userData).pipe(
+      map((response) => response),
+      catchError((error) => throwError(() => error.error))
+    );
+  }
 
 
 }

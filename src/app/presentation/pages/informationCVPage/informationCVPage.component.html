@@ -70,7 +70,7 @@
 
     <button
       *ngIf="!isUpdateMode"
-      [disabled]="!hasChanges()"
+      [disabled]="!hasChanges() || !curriculumVitae.cvFieldsDTOs?.length"
       class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
       (click)="createCV()"
     >
@@ -79,7 +79,7 @@
 
     <button
       *ngIf="isUpdateMode"
-      [disabled]="!hasChanges()"
+      [disabled]="!hasChanges() || !curriculumVitae.cvFieldsDTOs?.length"
       class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded"
       (click)="updateCV()"
     >
