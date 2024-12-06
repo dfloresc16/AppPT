@@ -61,7 +61,7 @@ export default class RecoveryPasswordComponent {
         next: (response) => {
           Swal.fire({
             title: 'Solicitud enviada',
-            text: 'Se ha enviado un correo para recuperar la contraseña.',
+            text: 'Se ha cambiado la contraseña con exito',
             icon: 'success',
             confirmButtonText: 'Aceptar',
           }).then(() => {
@@ -71,7 +71,7 @@ export default class RecoveryPasswordComponent {
         error: (error) => {
           Swal.fire({
             title: 'Error',
-            text: 'No se pudo procesar la solicitud. Intenta nuevamente.',
+            text: 'No se ha podido cambiar la contraseña',
             icon: 'error',
             confirmButtonText: 'Aceptar',
           });

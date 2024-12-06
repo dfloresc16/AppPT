@@ -119,7 +119,7 @@ export default class LoginPageComponent implements OnInit {
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const validLength = password?.length > 8;
+    const validLength = password?.length >= 8;
 
     const valid = hasUpperCase && hasNumber && hasSpecialChar && validLength;
     return valid ? null : { passwordStrength: true };
