@@ -91,18 +91,43 @@ export default class InformationCVPageComponent {
           console.log('CV actualizado exitosamente:', response);
           this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Actualizar estado original
           this.cdr.markForCheck(); // Actualizar vista
+
+          // Mostrar alerta de éxito
+          Swal.fire({
+            icon: 'success',
+            title: 'CV actualizado',
+            text: 'El currículum vitae se actualizó exitosamente.',
+            confirmButtonText: 'Aceptar'
+          });
         },
         (error) => {
           console.error('Error al actualizar el CV:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No tiene permitido actualizar el CV',
+            confirmButtonText: 'Aceptar'
+          });
         }
       );
     } else {
       console.warn('No se encontró userId en sessionStorage.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Usuario no encontrado',
+        text: 'No se encontró un ID de usuario en la sesión.',
+        confirmButtonText: 'Aceptar'
+      });
     }
   }
 
+
   createCV(): void {
+
+    console.log("Hola mundo");
+
     const userId: number = Number(sessionStorage.getItem('userId'));
+    console.log(this.curriculumVitae.cvFieldsDTOs?.length);
 
     if (!this.curriculumVitae.cvFieldsDTOs?.length) {
       Swal.fire({
