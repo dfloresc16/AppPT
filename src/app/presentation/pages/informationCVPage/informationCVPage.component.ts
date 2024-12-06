@@ -55,6 +55,7 @@ export default class InformationCVPageComponent {
       this.dataService.getDataCV(userId).subscribe(
         (response) => {
           if (response.body?.cvFieldsDTOs && Array.isArray(response.body.cvFieldsDTOs)) {
+            sessionStorage.setItem('keyCV', this.curriculumVitae.token || '');
             this.curriculumVitae.cvFieldsDTOs = [...response.body.cvFieldsDTOs];
             this.isUpdateMode = true; // Habilitar modo de actualización si se cargaron datos
             this.originalData = JSON.stringify(this.curriculumVitae.cvFieldsDTOs); // Guardar estado original
@@ -83,8 +84,11 @@ export default class InformationCVPageComponent {
 
   updateCV(): void {
     const userId: number = Number(sessionStorage.getItem('userId'));
+    const cvToken: string = sessionStorage.getItem('keyCV') || '';
     if (userId) {
       console.log('Llamando a actualizarCV con:', this.curriculumVitae);
+      this.curriculumVitae.token = cvToken;
+      console.log('Token cv' + this.curriculumVitae.token);
 
       this.dataService.actualizarCV(this.curriculumVitae, userId).subscribe(
         (response) => {
