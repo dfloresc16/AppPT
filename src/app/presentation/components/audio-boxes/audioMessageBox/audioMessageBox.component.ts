@@ -21,6 +21,7 @@ export class AudioMessageBoxComponent {
   timerSubscription!: Subscription;
 
   private speechRecognition: any;
+  private silenceTimeout: any;
 
   constructor() {
     this.initializeSpeechRecognition();
@@ -38,11 +39,23 @@ export class AudioMessageBoxComponent {
       this.speechRecognition.onresult = (event: any) => {
         this.transcript = event.results[0][0].transcript;
         console.log('Texto reconocido:', this.transcript);
+
+        // Reinicia el temporizador de silencio
+        if (this.silenceTimeout) {
+          clearTimeout(this.silenceTimeout);
+        }
+        this.silenceTimeout = setTimeout(() => {
+          console.log('Silencio prolongado detectado, deteniendo la grabación.');
+          this.stopRecording();
+        }, 5000); // Tiempo de espera para detener por silencio prolongado (en ms)
       };
 
       this.speechRecognition.onspeechend = () => {
-        console.log('Silencio detectado, deteniendo la grabación.');
-        this.stopRecording(); // Detener la grabación automáticamente
+        console.log('Silencio detectado, esperando para verificar.');
+        this.silenceTimeout = setTimeout(() => {
+          console.log('Silencio prolongado detectado, deteniendo la grabación.');
+          this.stopRecording();
+        }, 5000); // Tiempo de espera para detener por silencio prolongado (en ms)
       };
 
       this.speechRecognition.onerror = (event: any) => {
@@ -54,10 +67,8 @@ export class AudioMessageBoxComponent {
     }
   }
 
-
   startRecording() {
-    // Reiniciar la transcripción al comenzar una nueva grabación
-    this.transcript = '';
+    this.transcript = ''; // Reinicia la transcripción al comenzar una nueva grabación
 
     const getMedia$ = from(navigator.mediaDevices.getUserMedia({ audio: true }));
 
@@ -95,7 +106,6 @@ export class AudioMessageBoxComponent {
     });
   }
 
-
   stopRecording() {
     if (this.mediaRecorder) {
       this.mediaRecorder.stop();
@@ -123,6 +133,10 @@ export class AudioMessageBoxComponent {
 
     if (this.speechRecognition) {
       this.speechRecognition.stop();
+    }
+
+    if (this.silenceTimeout) {
+      clearTimeout(this.silenceTimeout);
     }
   }
 
