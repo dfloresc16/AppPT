@@ -27,7 +27,7 @@ export default class RegisterPageComponent {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         userName: ['', Validators.required],
-        phoneNumber: ['', [Validators.required, this.phoneNumberValidator,Validators.minLength(6),Validators.maxLength(6),]], // Validador actualizado
+        phoneNumber: ['', [Validators.required, this.phoneNumberValidator,Validators.minLength(10),Validators.maxLength(10)]], // Validador actualizado
         email: ['', [Validators.required, this.emailDomainValidator]],
         password: ['', [Validators.required, this.passwordStrengthValidator]], // Validación de contraseña actualizada
         confirmPassword: ['', Validators.required]
