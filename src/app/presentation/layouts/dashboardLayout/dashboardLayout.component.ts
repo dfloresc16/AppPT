@@ -13,7 +13,7 @@ import { routes } from '../../../app.routes';
     SidebarMenuItemComponent
   ],
   templateUrl: './dashboardLayout.component.html',
-  styleUrl: './dashboardLayout.component.css',
+  styleUrls: ['./dashboardLayout.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardLayoutComponent {
@@ -32,5 +32,10 @@ export class DashboardLayoutComponent {
     // Imprimir el contenido de 'routes' y 'fullName' en la consola
     console.log(this.routes);
     console.log(this.fullName);
+  }
+
+  // trackBy function para mejorar el rendimiento en *ngFor
+  trackByPath(index: number, route: any): string {
+    return route.path;
   }
 }
