@@ -18,16 +18,19 @@ import { routes } from '../../../app.routes';
 })
 export class DashboardLayoutComponent {
 
-
-
-
-  public routes = routes[2].children?.filter( (route) => route.data);
+  public routes = routes[2].children?.filter((route) => route.data);
+  public fullName: string = '';
 
   constructor() {
-    // Imprimir el contenido de 'routes' en la consola
+    // Recuperar 'name' y 'lastname' del sessionStorage
+    const name = sessionStorage.getItem('name');
+    const lastname = sessionStorage.getItem('lastname');
+
+    // Formar el string completo y asignarlo a 'fullName'
+    this.fullName = `${name || ''} ${lastname || ''}`.trim();
+
+    // Imprimir el contenido de 'routes' y 'fullName' en la consola
     console.log(this.routes);
+    console.log(this.fullName);
   }
-
-
-
 }
