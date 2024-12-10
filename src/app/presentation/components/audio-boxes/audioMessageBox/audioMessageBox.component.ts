@@ -54,7 +54,11 @@ export class AudioMessageBoxComponent {
     }
   }
 
+
   startRecording() {
+    // Reiniciar la transcripción al comenzar una nueva grabación
+    this.transcript = '';
+
     const getMedia$ = from(navigator.mediaDevices.getUserMedia({ audio: true }));
 
     getMedia$.subscribe({
@@ -90,6 +94,7 @@ export class AudioMessageBoxComponent {
       },
     });
   }
+
 
   stopRecording() {
     if (this.mediaRecorder) {
