@@ -58,10 +58,11 @@
             formControlName="phoneNumber"
             required
             class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
-            <div *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid')" class="text-red-500 text-sm mt-1">
-              El número de celular debe tener exactamente 10 dígitos.
-            </div>
-
+          <div
+            *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid') && ( registerForm.get('phoneNumber')?.hasError('minlength') || registerForm.get('phoneNumber')?.hasError('maxlength'))"
+            class="text-red-500 text-sm mt-1">
+            El número de celular debe tener exactamente 10 dígitos.
+          </div>
         </div>
       </div>
 
@@ -80,18 +81,27 @@
         <div
           *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('emailDomain')"
           class="text-red-500 text-sm mt-1">
-          El correo debe tener dominio"&#64;"ipn.mx o "&#64;"alumno.ipn.mx.
+          El correo debe tener dominio "&#64;"ipn.mx o "&#64;"alumno.ipn.mx.
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-[#E5E7EB]">Contraseña</label>
-          <input
-            type="password"
-            formControlName="password"
-            required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div class="relative">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              required
+              class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+            <button
+              type="button"
+              (click)="showPassword = !showPassword"
+              class="absolute inset-y-0 right-0 px-3 text-[#6A5ACD] focus:outline-none">
+              <span *ngIf="showPassword">🙈</span>
+              <span *ngIf="!showPassword">👁️</span>
+            </button>
+          </div>
           <div
             *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')"
             class="text-red-500 text-sm mt-1">
@@ -105,11 +115,20 @@
         </div>
         <div>
           <label class="block text-sm font-medium text-[#E5E7EB]">Repite la Contraseña</label>
-          <input
-            type="password"
-            formControlName="confirmPassword"
-            required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+          <div class="relative">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              required
+              class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+            <button
+              type="button"
+              (click)="showConfirmPassword = !showConfirmPassword"
+              class="absolute inset-y-0 right-0 px-3 text-[#6A5ACD] focus:outline-none">
+              <span *ngIf="showConfirmPassword">🙈</span>
+              <span *ngIf="!showConfirmPassword">👁️</span>
+            </button>
+          </div>
           <div
             *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
             class="text-red-500 text-sm mt-1">
