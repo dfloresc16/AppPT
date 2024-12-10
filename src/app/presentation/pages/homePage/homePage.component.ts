@@ -2,6 +2,7 @@ import { QuestionJoinAnswerInputsDTO } from './../../../interfaces/QuestionJoinA
 import { InterviewService } from './../../services/InterviewService.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ChaMessageComponent } from '../../components/chat-bubbles/chatMessage/chatMessage.component';
 import { MyMessageComponent } from '../../components/chat-bubbles/myMessage/myMessage.component';
 import { AudioMessageBoxComponent } from '../../components/audio-boxes/audioMessageBox/audioMessageBox.component';
@@ -35,12 +36,31 @@ export default class HomePageComponent {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private interviewService: InterviewService
+    private interviewService: InterviewService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.userId = Number(sessionStorage.getItem('userId'));
-    this.fetchAndProcessInterview();
+    this.confirmAndFetchInterview();
+  }
+
+  // Mostrar pop-up de confirmación antes de intentar obtener entrevistas
+  confirmAndFetchInterview() {
+    Swal.fire({
+      icon: 'question',
+      title: '¿Deseas iniciar una nueva entrevista?',
+      text: 'Confirma para continuar o regresa al menú principal.',
+      showCancelButton: true,
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Regresar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.fetchAndProcessInterview(); // Hacer la petición solo si confirma
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.router.navigate(['/dashboard/curriculum-vitae']); // Redirigir si cancela
+      }
+    });
   }
 
   fetchAndProcessInterview() {
