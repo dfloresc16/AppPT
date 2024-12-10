@@ -27,9 +27,9 @@ export default class RegisterPageComponent {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         userName: ['', Validators.required],
-        phoneNumber: ['', Validators.required],
+        phoneNumber: ['', [Validators.required, this.phoneNumberValidator]], // Validador actualizado
         email: ['', [Validators.required, this.emailDomainValidator]],
-        password: ['', [Validators.required, this.passwordStrengthValidator]],
+        password: ['', [Validators.required, this.passwordStrengthValidator]], // Validación de contraseña actualizada
         confirmPassword: ['', Validators.required]
       },
       { validators: this.passwordsMatchValidator }
@@ -83,6 +83,12 @@ export default class RegisterPageComponent {
     }
   }
 
+  phoneNumberValidator(control: AbstractControl): ValidationErrors | null {
+    const phone = control.value || '';
+    const valid = /^\d{10}$/.test(phone); // Validar 10 dígitos
+    return valid ? null : { phoneNumberInvalid: true };
+  }
+
   emailDomainValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value || '';
     const valid = /@(ipn\.mx|alumno\.ipn\.mx)$/.test(email);
@@ -94,7 +100,7 @@ export default class RegisterPageComponent {
     const hasUpperCase = /[A-Z]/.test(password); // Verifica mayúsculas
     const hasNumber = /[0-9]/.test(password);    // Verifica números
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password); // Verifica caracteres especiales
-    const validLength = password.length > 8;     // Verifica longitud
+    const validLength = password.length >= 8;     // Verifica longitud mínima de 8
 
     const valid = hasUpperCase && hasNumber && hasSpecialChar && validLength;
     return valid ? null : { passwordStrength: true };

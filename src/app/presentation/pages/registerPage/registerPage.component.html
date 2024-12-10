@@ -58,11 +58,10 @@
             formControlName="phoneNumber"
             required
             class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
-          <div
-            *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('required')"
-            class="text-red-500 text-sm mt-1">
-            El número de celular es obligatorio.
-          </div>
+            <div *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid')" class="text-red-500 text-sm mt-1">
+              El número de celular debe tener exactamente 10 dígitos.
+            </div>
+
         </div>
       </div>
 
@@ -101,7 +100,7 @@
           <div
             *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('passwordStrength')"
             class="text-red-500 text-sm mt-1">
-            La contraseña debe tener más de 8 caracteres, una mayúscula, un número y un carácter especial.
+            La contraseña debe tener más de 10 caracteres, una mayúscula, un número y un carácter especial.
           </div>
         </div>
         <div>
