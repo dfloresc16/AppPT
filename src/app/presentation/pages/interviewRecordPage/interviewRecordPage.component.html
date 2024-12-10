@@ -4,51 +4,53 @@
   <!-- Lista de entrevistas paginadas -->
   <div *ngIf="paginatedRecords.length > 0; else noRecords">
     <div *ngFor="let record of paginatedRecords; let i = index" class="mb-4">
-      <div class="bg-gray-100 border rounded-lg shadow-sm">
-        <!-- Header del acordeón -->
-        <button
-          type="button"
-          class="w-full flex justify-between items-center px-4 py-2 text-left text-lg font-medium text-gray-700 hover:bg-gray-200"
-          (click)="toggleAccordion(i)"
-        >
-          <span>
-            Interview ID: {{ record.interviewId }} |
-            Date: {{ record.dateTime | date: 'medium' }} |
-            Score: {{ record.score }}
-          </span>
-          <span class="ml-2">
-            <svg
-              [class.rotate-180]="accordionStates[i]"
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 transform transition-transform"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
-        </button>
-
-        <!-- Contenido del acordeón -->
-        <div *ngIf="accordionStates[i]" class="px-4 py-2 bg-white border-t">
-          <!-- Botón para obtener detalles -->
+      <div *ngIf="record.score != -1">
+        <div class="bg-gray-100 border rounded-lg shadow-sm">
+          <!-- Header del acordeón -->
           <button
-            *ngIf="!selectedInterviewResults || selectedInterviewResults.interviewId !== record.interviewId"
-            class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            (click)="getInterviewDetails(record.interviewId)"
+            type="button"
+            class="w-full flex justify-between items-center px-4 py-2 text-left text-lg font-medium text-gray-700 hover:bg-gray-200"
+            (click)="toggleAccordion(i)"
           >
-            View Details
+            <span>
+              Interview ID: {{ record.interviewId }} |
+              Date: {{ record.dateTime | date: 'medium' }} |
+              Score: {{ record.score }}
+            </span>
+            <span class="ml-2">
+              <svg
+                [class.rotate-180]="accordionStates[i]"
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 transform transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
           </button>
 
-          <!-- Detalles de la entrevista -->
-          <div *ngIf="selectedInterviewResults && selectedInterviewResults.interviewId === record.interviewId" class="mt-4">
-            <h3 class="text-lg font-bold mb-2">Interview Details</h3>
-            <div *ngFor="let detail of selectedInterviewResults.details" class="mb-2 p-2 border rounded-lg bg-gray-50">
-              <p><strong>Question:</strong> <span class="text-black">{{ detail.bodyQuestion }}</span></p>
-              <p><strong>Answer:</strong> <span class="text-black">{{ detail.answerUser }}</span></p>
-              <p><strong>Score:</strong> <span class="text-black">{{ detail.score }}</span></p>
-              <p><strong>Answer LLM:</strong> <span class="text-black">{{ detail.answerLLM }}</span></p>
+          <!-- Contenido del acordeón -->
+          <div *ngIf="accordionStates[i]" class="px-4 py-2 bg-white border-t">
+            <!-- Botón para obtener detalles -->
+            <button
+              *ngIf="!selectedInterviewResults || selectedInterviewResults.interviewId !== record.interviewId"
+              class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              (click)="getInterviewDetails(record.interviewId)"
+            >
+              View Details
+            </button>
+
+            <!-- Detalles de la entrevista -->
+            <div *ngIf="selectedInterviewResults && selectedInterviewResults.interviewId === record.interviewId" class="mt-4">
+              <h3 class="text-lg font-bold mb-2">Interview Details</h3>
+              <div *ngFor="let detail of selectedInterviewResults.details" class="mb-2 p-2 border rounded-lg bg-gray-50">
+                <p><strong>Question:</strong> <span class="text-black">{{ detail.bodyQuestion }}</span></p>
+                <p><strong>Answer:</strong> <span class="text-black">{{ detail.answerUser }}</span></p>
+                <p><strong>Score:</strong> <span class="text-black">{{ detail.score }}</span></p>
+                <p><strong>Answer LLM:</strong> <span class="text-black">{{ detail.answerLLM }}</span></p>
+              </div>
             </div>
           </div>
         </div>
