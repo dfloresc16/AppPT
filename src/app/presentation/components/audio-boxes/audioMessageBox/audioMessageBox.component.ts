@@ -37,7 +37,8 @@ export class AudioMessageBoxComponent {
       this.speechRecognition.interimResults = false;
 
       this.speechRecognition.onresult = (event: any) => {
-        this.transcript = event.results[0][0].transcript;
+        const newTranscript = event.results[0][0].transcript;
+        this.transcript += ` ${newTranscript}`; // Concatenar nuevo texto al existente
         console.log('Texto reconocido:', this.transcript);
 
         // Reinicia el temporizador de silencio
@@ -51,11 +52,13 @@ export class AudioMessageBoxComponent {
       };
 
       this.speechRecognition.onspeechend = () => {
-        console.log('Silencio detectado, esperando para verificar.');
-        this.silenceTimeout = setTimeout(() => {
-          console.log('Silencio prolongado detectado, deteniendo la grabación.');
-          this.stopRecording();
-        }, 5000); // Tiempo de espera para detener por silencio prolongado (en ms)
+        console.log('Silencio detectado, verificando...');
+        // Reiniciar el reconocimiento de voz para seguir capturando discurso
+        try {
+          this.speechRecognition.start();
+        } catch (error) {
+          console.warn('El reconocimiento de voz ya estaba en ejecución.');
+        }
       };
 
       this.speechRecognition.onerror = (event: any) => {
