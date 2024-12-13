@@ -57,9 +57,13 @@
             type="tel"
             formControlName="phoneNumber"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+            maxlength="10"
+            pattern="\d{10}"
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
+            (keypress)="allowOnlyNumbers($event)"
+            (input)="limitToTenDigits($event)" />
           <div
-            *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid') && ( registerForm.get('phoneNumber')?.hasError('minlength') || registerForm.get('phoneNumber')?.hasError('maxlength'))"
+            *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid')"
             class="text-red-500 text-sm mt-1">
             El número de celular debe tener exactamente 10 dígitos.
           </div>
@@ -81,68 +85,18 @@
         <div
           *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('emailDomain')"
           class="text-red-500 text-sm mt-1">
-          El correo debe tener dominio "&#64;"ipn.mx o "&#64;"alumno.ipn.mx.
+          El correo debe tener dominio "&#64;ipn.mx" o "&#64;alumno.ipn.mx".
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-[#E5E7EB]">Contraseña</label>
-          <div class="relative">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              required
-              class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
-            <button
-              type="button"
-              (click)="showPassword = !showPassword"
-              class="absolute inset-y-0 right-0 px-3 text-[#6A5ACD] focus:outline-none">
-              <span *ngIf="showPassword">🙈</span>
-              <span *ngIf="!showPassword">👁️</span>
-            </button>
-          </div>
-          <div
-            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')"
-            class="text-red-500 text-sm mt-1">
-            La contraseña es obligatoria.
-          </div>
-          <div
-            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('passwordStrength')"
-            class="text-red-500 text-sm mt-1">
-            La contraseña debe tener más de 10 caracteres, una mayúscula, un número y un carácter especial.
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-[#E5E7EB]">Repite la Contraseña</label>
-          <div class="relative">
-            <input
-              [type]="showConfirmPassword ? 'text' : 'password'"
-              formControlName="confirmPassword"
-              required
-              class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
-            <button
-              type="button"
-              (click)="showConfirmPassword = !showConfirmPassword"
-              class="absolute inset-y-0 right-0 px-3 text-[#6A5ACD] focus:outline-none">
-              <span *ngIf="showConfirmPassword">🙈</span>
-              <span *ngIf="!showConfirmPassword">👁️</span>
-            </button>
-          </div>
-          <div
-            *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
-            class="text-red-500 text-sm mt-1">
-            Las contraseñas no coinciden.
-          </div>
-        </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="registerForm.invalid || isLoading"
+          class="w-full bg-[#6A5ACD] text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] focus:ring-offset-2 disabled:bg-gray-500">
+          Crear Cuenta
+        </button>
       </div>
-
-      <button
-        type="submit"
-        [disabled]="registerForm.invalid || isLoading"
-        class="w-full bg-[#6A5ACD] text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] focus:ring-offset-2 disabled:bg-gray-500">
-        Crear Cuenta
-      </button>
 
       <div class="text-center text-sm text-[#9CA3AF] mt-4">
         Al continuar, aceptas nuestro
