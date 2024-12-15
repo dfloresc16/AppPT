@@ -24,7 +24,9 @@ export class DashboardLayoutComponent {
   constructor() {
     // Recuperar 'name' y 'lastname' del sessionStorage
     const name = sessionStorage.getItem('name');
-    const lastname = sessionStorage.getItem('lastname');
+    const lastname = sessionStorage.getItem('lastName');
+    console.log(name);
+    console.log(lastname)
 
     // Formar el string completo y asignarlo a 'fullName'
     this.fullName = `${name || ''} ${lastname || ''}`.trim();

@@ -66,6 +66,13 @@ em {
   @apply bg-indigo-600; /* Cambio de color del thumb al hacer hover */
 }
 
+.no-bullets {
+  list-style-type: none; /* Elimina los puntos o viñetas */
+  padding: 0; /* Opcional: elimina el padding izquierdo predeterminado */
+  margin: 0; /* Opcional: elimina el margen predeterminado */
+}
+
+
 
 /* Animations */
 
@@ -75,3 +82,4 @@ em {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
