@@ -118,4 +118,8 @@ export default class RegisterPageComponent {
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   };
+
+  redirectToLogin(): void {
+    this.router.navigate(['/auth/login']);
+  }
 }
