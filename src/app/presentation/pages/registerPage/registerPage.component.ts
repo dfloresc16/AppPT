@@ -24,18 +24,22 @@ export default class RegisterPageComponent {
   showConfirmPassword: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
-    this.registerForm = this.fb.group(
-      {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        userName: ['', Validators.required],
-        phoneNumber: ['', [Validators.required, this.phoneNumberValidator,Validators.minLength(10),Validators.maxLength(10)]], // Validador actualizado
-        email: ['', [Validators.required, this.emailDomainValidator]],
-        password: ['', [Validators.required, this.passwordStrengthValidator]], // Validación de contraseña actualizada
-        confirmPassword: ['', Validators.required]
-      },
-      { validators: this.passwordsMatchValidator }
-    );
+    this.registerForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      userName: ['', Validators.required],
+      phoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^\d{10}$/) // Validar exactamente 10 dígitos numéricos
+        ]
+      ],
+      email: ['', [Validators.required, this.emailDomainValidator]],
+      password: ['', [Validators.required, this.passwordStrengthValidator]],
+      confirmPassword: ['', Validators.required]
+    }, { validators: this.passwordsMatchValidator });
+
   }
 
   onSubmit(): void {

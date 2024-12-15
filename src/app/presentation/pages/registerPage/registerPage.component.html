@@ -57,7 +57,9 @@
             type="tel"
             formControlName="phoneNumber"
             required
-            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]" />
+            maxlength="10"
+            class="mt-1 block w-full border border-[#374151] bg-[#1F2937] text-white rounded-md p-2 focus:ring-[#6A5ACD] focus:border-[#6A5ACD]"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" />
           <div
             *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('phoneNumberInvalid') && ( registerForm.get('phoneNumber')?.hasError('minlength') || registerForm.get('phoneNumber')?.hasError('maxlength'))"
             class="text-red-500 text-sm mt-1">
