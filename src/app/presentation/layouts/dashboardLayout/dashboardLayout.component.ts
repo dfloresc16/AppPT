@@ -20,17 +20,18 @@ export class DashboardLayoutComponent {
 
   public routes = routes[2].children?.filter((route) => route.data);
   public fullName: string = '';
-
+  public userName: string = '';
   constructor() {
     // Recuperar 'name' y 'lastname' del sessionStorage
     const name = sessionStorage.getItem('name');
     const lastname = sessionStorage.getItem('lastName');
+    this.userName = sessionStorage.getItem('userName') || '';
     console.log(name);
     console.log(lastname)
+    console.log(this.userName);
 
     // Formar el string completo y asignarlo a 'fullName'
     this.fullName = `${name || ''} ${lastname || ''}`.trim();
-
     // Imprimir el contenido de 'routes' y 'fullName' en la consola
     console.log(this.routes);
     console.log(this.fullName);
