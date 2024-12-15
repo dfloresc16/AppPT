@@ -63,8 +63,8 @@ export default class LoginPageComponent implements OnInit {
 
   private handleLoginSuccess(token: string, userLogin: UserLoginDTO): void {
     sessionStorage.setItem('access_token', token);
-    this.getDataUser(userLogin);
     this.showSuccessAlert('¡Login exitoso!', 'Bienvenido a Turing Chat');
+    this.getDataUser(userLogin);
     this.router.navigateByUrl('/dashboard');
   }
 
