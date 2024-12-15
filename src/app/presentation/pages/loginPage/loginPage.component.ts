@@ -19,6 +19,7 @@ import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
   ]
 })
 export default class LoginPageComponent implements OnInit {
+  version: string = '1.1.4';
   loginForm: FormGroup;
   isLoading = false; // Estado para manejar el spinner
 

@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
   ]
 })
 export default class RegisterPageComponent {
+  version: string = '1.1.4';
   registerForm: FormGroup;
   isLoading = false;
   showPassword: boolean = false;
