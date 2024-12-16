@@ -1,11 +1,12 @@
-import { UserLoginDTO } from './../../../interfaces/userLoginDTO';
-import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { UserLoginDTO } from '../../../interfaces/userLoginDTO';
 import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
 
 @Component({
@@ -21,7 +22,8 @@ import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
 export default class LoginPageComponent implements OnInit {
   version: string = '1.1.4';
   loginForm: FormGroup;
-  isLoading = false; // Estado para manejar el spinner
+  isLoading = false;
+  showPassword = false; // Estado para mostrar/ocultar la contraseña
 
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -37,7 +39,6 @@ export default class LoginPageComponent implements OnInit {
     console.log('LoginPageComponent loaded');
     sessionStorage.clear(); // Limpia el sessionStorage al cargar el login
   }
-
 
   onSubmit(): void {
     if (this.loginForm.valid) {
@@ -59,6 +60,10 @@ export default class LoginPageComponent implements OnInit {
         },
       });
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   private handleLoginSuccess(token: string, userLogin: UserLoginDTO): void {
@@ -105,10 +110,6 @@ export default class LoginPageComponent implements OnInit {
     this.router.navigate(['/auth/register']);
   }
 
-  redirecToRecoveryPassword(): void{
-    this.router.navigate(['/auth/recovery']);
-  }
-
   emailDomainValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value;
     const valid = /@(?:ipn\.mx|alumno\.ipn\.mx)$/.test(email);
@@ -131,7 +132,7 @@ export default class LoginPageComponent implements OnInit {
       icon: 'success',
       title: title,
       text: text,
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
     });
   }
 
@@ -140,7 +141,7 @@ export default class LoginPageComponent implements OnInit {
       icon: 'error',
       title: title,
       text: 'Usuario y/o contraseña incorrectos',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
     });
   }
 }
