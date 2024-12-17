@@ -3,7 +3,7 @@
     <!-- Botón de grabación -->
     <button type="button"
       class="bg-red-500 text-white p-6 rounded-full hover:bg-red-600 transition focus:outline-none focus:ring-4 focus:ring-red-300"
-      (click)="isRecording ? stopRecording() : startRecording()">
+      (click)="startRecording()">
       <i [ngClass]="isRecording ? 'fa-solid fa-stop' : 'fa-solid fa-microphone'"></i>
     </button>
 

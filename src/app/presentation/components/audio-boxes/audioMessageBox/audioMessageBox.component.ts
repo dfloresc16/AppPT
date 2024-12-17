@@ -21,7 +21,6 @@ export class AudioMessageBoxComponent {
   timerSubscription!: Subscription;
 
   private speechRecognition: any;
-  private silenceTimeout: any;
 
   constructor() {
     this.initializeSpeechRecognition();
@@ -33,37 +32,19 @@ export class AudioMessageBoxComponent {
 
     if (SpeechRecognition) {
       this.speechRecognition = new SpeechRecognition();
+
+      // Configura el idioma principal como español, pero permite detectar otros idiomas
       this.speechRecognition.lang = 'es-ES';
       this.speechRecognition.interimResults = false;
 
       this.speechRecognition.onresult = (event: any) => {
         const newTranscript = event.results[0][0].transcript;
-        this.transcript += ` ${newTranscript}`; // Concatenar nuevo texto al existente
+        this.transcript += ` ${newTranscript}`;
         console.log('Texto reconocido:', this.transcript);
-
-        // Reinicia el temporizador de silencio
-        if (this.silenceTimeout) {
-          clearTimeout(this.silenceTimeout);
-        }
-        this.silenceTimeout = setTimeout(() => {
-          console.log('Silencio prolongado detectado, deteniendo la grabación.');
-          this.stopRecording();
-        }, 5000); // Tiempo de espera para detener por silencio prolongado (en ms)
-      };
-
-      this.speechRecognition.onspeechend = () => {
-        console.log('Silencio detectado, verificando...');
-        // Reiniciar el reconocimiento de voz para seguir capturando discurso
-        try {
-          this.speechRecognition.start();
-        } catch (error) {
-          console.warn('El reconocimiento de voz ya estaba en ejecución.');
-        }
       };
 
       this.speechRecognition.onerror = (event: any) => {
-        console.error('Error al reconocer el audio:', event.error);
-        this.stopRecording();
+        console.error('Error en el reconocimiento de voz:', event.error);
       };
     } else {
       console.error('SpeechRecognition API no está disponible.');
@@ -71,8 +52,12 @@ export class AudioMessageBoxComponent {
   }
 
   startRecording() {
-    this.transcript = ''; // Reinicia la transcripción al comenzar una nueva grabación
+    if (this.isRecording) {
+      this.stopRecording();
+      return;
+    }
 
+    this.transcript = '';
     const getMedia$ = from(navigator.mediaDevices.getUserMedia({ audio: true }));
 
     getMedia$.subscribe({
@@ -95,12 +80,9 @@ export class AudioMessageBoxComponent {
 
         this.showSwalAlertAutoClose('Grabación iniciada', 'La grabación ha comenzado.', 'info');
 
+        // Inicia el reconocimiento de voz
         if (this.speechRecognition) {
-          try {
-            this.speechRecognition.start();
-          } catch (error) {
-            console.warn('El reconocimiento de voz ya estaba en ejecución.');
-          }
+          this.speechRecognition.start();
         }
       },
       error: (error) => {
@@ -115,10 +97,9 @@ export class AudioMessageBoxComponent {
       this.isRecording = false;
       this.stopTimer();
 
-      // Mostrar siempre la alerta, incluso si no hay texto capturado
       const message = this.transcript.trim() !== ''
-        ? `Texto: ${this.transcript}`
-        : 'No se reconoció ningún texto.';
+        ? `Texto capturado: ${this.transcript}`
+        : 'No se capturó ningún texto.';
 
       this.showSwalAlert(
         'Grabación finalizada',
@@ -126,20 +107,15 @@ export class AudioMessageBoxComponent {
         'success'
       );
 
-      // Emitir solo si hay texto capturado
       if (this.transcript.trim() !== '') {
         this.messageCaptured.emit(this.transcript);
       }
 
-      this.transcript = ''; // Reiniciar la transcripción
+      this.transcript = '';
     }
 
     if (this.speechRecognition) {
       this.speechRecognition.stop();
-    }
-
-    if (this.silenceTimeout) {
-      clearTimeout(this.silenceTimeout);
     }
   }
 
@@ -157,10 +133,7 @@ export class AudioMessageBoxComponent {
   }
 
   convertAudioToText(_audioBlob: Blob) {
-    if (!this.speechRecognition) {
-      console.error('SpeechRecognition API no está disponible.');
-      return;
-    }
+    console.log('Se finalizó la grabación y se puede enviar el audio al servidor si es necesario.');
   }
 
   showSwalAlertAutoClose(title: string, text: string, icon: 'info' | 'success' | 'error') {
