@@ -20,7 +20,7 @@ import { UserRespLoginDTO } from '../../../interfaces/UserRespLoginDTO';
   ]
 })
 export default class LoginPageComponent implements OnInit {
-  version: string = '1.1.4';
+  version: string = '1.0.0';
   loginForm: FormGroup;
   isLoading = false;
   showPassword = false; // Estado para mostrar/ocultar la contraseña
@@ -68,7 +68,7 @@ export default class LoginPageComponent implements OnInit {
 
   private handleLoginSuccess(token: string, userLogin: UserLoginDTO): void {
     sessionStorage.setItem('access_token', token);
-    this.showSuccessAlert('¡Login exitoso!', 'Bienvenido a Turing Chat');
+    this.showSuccessAlert('¡Login exitoso!', 'Bienvenido a Interview Chat');
     this.getDataUser(userLogin);
     this.router.navigateByUrl('/dashboard');
   }
